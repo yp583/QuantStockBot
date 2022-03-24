@@ -1,10 +1,9 @@
 import alpaca_trade_api as tradeapi
-from alpaca_trade_api.rest import TimeFrame, TimeFrameUnit
+from alpaca_trade_api.rest import TimeFrame
 import numpy as np
 from dictionary import *
-import matplotlib.pyplot as plt
 from helperFuncs import *
-from time import ctime, time, sleep
+from time import ctime, time
 from datetime import datetime, timedelta
 from fakeportfolio import *
 
@@ -17,27 +16,7 @@ base_url = 'https://paper-api.alpaca.markets'
 
 # instantiate REST API
 api = tradeapi.REST(key, secret, base_url, api_version='v2')
-def submitOrder(ticker: str, side):
-    account = api.get_account()
-    cash = float(account.cash)
-    sideStr = ""
-    if side > 0:
-        if (cash <= 25000):
-            return False
-        sideStr = "buy"
-    elif side < 0:
-        try:
-            api.get_position('TQQQ')
-        except:
-            return False
-        sideStr = "sell"
-    else:
-        return True
-    seconds = time()
-    nice_time = ctime(seconds)
-    api.submit_order(ticker, side * 100, side=sideStr, type="market", time_in_force="day")
-    print(f"Submitted Order at: {nice_time}")
-    return True
+
 def getHistoricalData(ticker: str, timeBack: int, startDate = "2021-03-01", endDate="2022-03-19", curr_day = 0):
     try:
         bars = api.get_bars(ticker, TimeFrame.Day, startDate, endDate, adjustment="raw")
